@@ -1,25 +1,18 @@
 on:
-  pull_request_target:
-    types: [opened]
-    branches:
-      - main
-
-permissions:
-  pull-requests: write
+  issues:
+    types:
+      - opened
 
 jobs:
-  thank-user:
-    runs-on: ubuntu-20.04
-    name: Say thanks for the PR
+  create_ado_pbi:
+    runs-on: ubuntu-latest
     steps:
-      - name: get message
-        env:
-          TITLE: ${{ github.event.pull_request.title }}
+      - name: 'Get GH issue'
+        id: gh
+        shell: pwsh
         run: |
-          message=$(echo "$TITLE" | grep -oP '[{\[][^}\]]+[}\]]' | sed 's/{\|}\|\[\|\]//g')
-          echo "message=$message" >> $GITHUB_ENV
-          echo $GITHUB_ENV
-          if [ -z $message ]; then
-              echo "message=$(echo 'Thank you for your contribution! We will review the pull request and get back to you soon.')" >> $GITHUB_ENV
-          fi
-          echo $GITHUB_ENV
+          $gh_issue_json = gh issue view ${{ github.event.issue.html_url }} --json assignees,author,body,closed,closedAt,comments,createdAt,id,labels,milestone,number,projectCards,reactionGroups,state,title,updatedAt,url
+          $gh_issue = ConvertFrom-Json $gh_issue_json
+          #$gh_issue.title
+          echo "::set-output name=title::$($gh_issue.title)"
+          echo "::set-output name=url::$($gh_issue.url)"
