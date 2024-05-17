@@ -14,7 +14,7 @@ jobs:
           $gh_issue_json = gh issue view ${{ github.event.issue.html_url }} --json assignees,author,body,closed,closedAt,comments,createdAt,id,labels,milestone,number,projectCards,reactionGroups,state,title,updatedAt,url
           $gh_issue = ConvertFrom-Json $gh_issue_json
           #$gh_issue.title
-          echo "::set-output name=title::$($gh_issue.title)"
-          echo "::set-output name=url::$($gh_issue.url)"
+          echo "name=title::$($gh_issue.title)"
+          echo "name=url::$($gh_issue.url)"
         env:
           GH_TOKEN: ${{ github.token }}
