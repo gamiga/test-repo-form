@@ -1,20 +1,15 @@
-on:
-  issues:
-    types:
-      - opened
+name: validate-pull-request-source
+on: pull_request
 
 jobs:
-  create_ado_pbi:
+  validate-pull-request-source:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Get GH issue'
-        id: gh
-        shell: pwsh
+      - name: Validate if PR is not from a forked repo
         run: |
-          $gh_issue_json = gh issue view ${{ github.event.issue.html_url }} --json assignees,author,body,closed,closedAt,comments,createdAt,id,labels,milestone,number,projectCards,reactionGroups,state,title,updatedAt,url
-          $gh_issue = ConvertFrom-Json $gh_issue_json
-          #$gh_issue.title
-          echo "name=title::$($gh_issue.title)"
-          echo "name=url::$($gh_issue.url)"
-        env:
-          GH_TOKEN: ${{ github.token }}
+          if [ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]; then
+            echo "Please create the PR from a branch in this repository, not from a forked repository."
+            exit 1
+          else
+            echo "PR is from a branch in this repository."
+          fi
