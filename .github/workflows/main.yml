@@ -16,3 +16,5 @@ jobs:
           #$gh_issue.title
           echo "::set-output name=title::$($gh_issue.title)"
           echo "::set-output name=url::$($gh_issue.url)"
+        env:
+          GH_TOKEN: ${{ github.token }}
