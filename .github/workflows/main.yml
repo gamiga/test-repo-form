@@ -1,19 +1,37 @@
-name: markdown
+name: cli
+
 on:
   push:
     branches:
-      - main
+      - '*'
   pull_request:
+    branches:
+      - 'main'
+      - 'release*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
-  changedfiles:
-    name: changed files
+  cli-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
+      - name: Setup build env
+        uses: ./.github/actions/setup-build-env
         with:
-          fetch-depth: 0
-      - name: Get changed files
-        id: changes
+          build-cache-key: cli-test
+      - name: Setup TEST_GIT_BRANCH
         run: |
-          echo "::set-output name=md::$(git diff --name-only --diff-filter=ACMRTUXB origin/${{ github.event.pull_request.base.ref }} ${{ github.event.pull_request.head.sha }} | grep .md$ | xargs)"
+          if [[ ${{ github.event_name }} == "push" ]]
+          then
+            export TEST_GIT_BRANCH=${GITHUB_REF##*/}
+          elif [[ ${{ github.event_name }} == "pull_request" ]]
+          then
+            export TEST_GIT_BRANCH=${{ github.event.pull_request.base.ref }}
+          fi
