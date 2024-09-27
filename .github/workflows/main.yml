@@ -38,4 +38,4 @@ jobs:
       
       - name: test code
         run: |
-          echo hello
+          echo ${{ github.ref }}
