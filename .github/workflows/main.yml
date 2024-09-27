@@ -1,13 +1,16 @@
 name: cli
 
-on:
-  push:
-    branches:
-      - '*'
-  pull_request:
+# on:
+#   push:
+#     branches:
+#       - '*'
+#   pull_request:
 #     branches:
 #       - 'main'
 #       - 'release*'
+on:
+  push:
+  pull_request:
 
 # concurrency:
 #   group: ${{ github.workflow }}-${{ github.ref }}
