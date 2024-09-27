@@ -10,7 +10,8 @@ name: cli
 #       - 'release*'
 on:
   push:
-  pull_request:
+    branches:
+      - '*'
 
 # concurrency:
 #   group: ${{ github.workflow }}-${{ github.ref }}
